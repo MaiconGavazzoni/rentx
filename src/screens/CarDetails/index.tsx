@@ -31,16 +31,35 @@ import {
   Footer
 
 } from './styles';
+import { useNavigation, CommonActions } from '@react-navigation/native';
+
+
 
 export function CarDetails() {
 
-  function handleTeste() {
-    console.log("Ok Click");
+  const navigation = useNavigation();
+
+  function handleHome() {
+    navigation.dispatch(
+      CommonActions.navigate({
+        name: 'Home',
+      })
+    )
   }
+
+  function handleConfirmRental() {
+    navigation.dispatch(
+      CommonActions.navigate({
+        name: 'Scheduling',
+      })
+    )
+  }
+
+ 
   return (
     <Container>
       <Header>
-        <BackButton onPress={handleTeste} />
+        <BackButton onPress={handleHome} />
       </Header>
 
       <CarImage>
@@ -75,7 +94,7 @@ export function CarDetails() {
         </About>
       </Content>
        <Footer>
-        <Button title='Confirmar'/>
+        <Button title='Escolher período do aluguel' onPress={handleConfirmRental}/>
       </Footer> 
     </Container>
   );

@@ -1,8 +1,9 @@
+import { useNavigation, CommonActions } from '@react-navigation/native';
 import React from 'react';
-import { StatusBar} from 'react-native';
+import { StatusBar } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import Logo from '../../assets/logo.svg';
-import {Car} from '../../components/Car';
+import { Car } from '../../components/Car';
 
 import {
   Container,
@@ -12,13 +13,16 @@ import {
   CarList
 } from './styles';
 
-export function Home(){
+export function Home() {
+
+  const navigation = useNavigation();
+
   const carData = {
     brand: "Audi",
     name: "RS 5 Coupé",
     rent: {
-      period:"Ao Dia",
-      price:120,
+      period: "Ao Dia",
+      price: 120,
     },
     thumbnail: 'https://freepngimg.com/thumb/audi/35227-5-audi-rs5-red.png'
   }
@@ -27,38 +31,50 @@ export function Home(){
     brand: "Porsche",
     name: "Panamera",
     rent: {
-      period:"Ao Dia",
-      price:340,
+      period: "Ao Dia",
+      price: 340,
     },
     thumbnail: 'https://www.pngkit.com/png/full/237-2375888_porsche-panamera-s.png'
   }
 
-  return(
+  function handleCarDetails() {
+    navigation.dispatch(
+      CommonActions.navigate({
+        name: 'CarDetails',
+      })
+    )
+  }
+
+  return (
     <Container>
-      <StatusBar 
+      <StatusBar
         barStyle='light-content'
         backgroundColor='transparent'
         translucent
       />
       <Header>
         <HeaderContent>
-        <Logo 
-          width={RFValue(108)}
-          height={RFValue(12)}
-        />
-        <TotalCars>
-          Total de 12 carros
-        </TotalCars >
+          <Logo
+            width={RFValue(108)}
+            height={RFValue(12)}
+          />
+          <TotalCars>
+            Total de 12 carros
+          </TotalCars >
         </HeaderContent>
       </Header>
-      <CarList 
-      data ={[1,2,3,4,5,6]}
-      keyExtractor={item=> String(item)}
-      renderItem={({item}) => <Car data={carData}/>}
-     
+      <CarList
+        data={[1, 2, 3, 4, 5, 6]}
+        keyExtractor={item => String(item)}
+        renderItem={({ item }) =>
+          <Car data={carData}
+            onPress={handleCarDetails}
+          />
+        }
+
       />
-      
-     
+
+
     </Container>
   );
 }

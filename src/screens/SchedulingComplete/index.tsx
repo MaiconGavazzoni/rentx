@@ -13,10 +13,20 @@ import {
   Message,
   Footer
 } from './styles';
+import { useNavigation, CommonActions } from '@react-navigation/native';
 
 export function SchedulingComplete(){
 
   const { width } = useWindowDimensions();
+  const navigation = useNavigation();
+
+  function handleConfirm() {
+    navigation.dispatch(
+      CommonActions.navigate({
+        name: 'Home',
+      })
+    )
+  }
 
   return(
     <Container>
@@ -39,7 +49,7 @@ export function SchedulingComplete(){
       </Content>
 
       <Footer>
-        <ConfirmButton title='OK' />
+        <ConfirmButton title='OK' onPress={handleConfirm}/>
       </Footer>
 
     </Container>

@@ -1,5 +1,6 @@
-import React, { Props } from 'react';
-
+import { useNavigation } from '@react-navigation/native';
+import React from 'react';
+import { RectButtonProps} from 'react-native-gesture-handler';
 import GasolineSvg from '../../assets/gasoline.svg';
 
 import {
@@ -25,13 +26,19 @@ interface CarData{
   thumbnail: string;
 }
 
-interface Props {
+interface Props extends RectButtonProps {
   data: CarData;
 }
 
-export function Car({data}: Props){
+export function Car({data, ...rest}: Props){
+  const navigation = useNavigation();
+
+  function handleConfirmRental(){
+    navigation.navigate('Scheduling')
+  }
+
   return(
-    <Container>
+    <Container {...rest}>
       <Details>
         <Brand>{data.brand}</Brand>
         <Name>{data.name}</Name>

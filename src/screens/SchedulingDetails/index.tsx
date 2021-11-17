@@ -43,10 +43,20 @@ import {
   Footer
 
 } from './styles';
+import { useNavigation, CommonActions } from '@react-navigation/native';
 
 export function SchedulingDetails() {
 
   const theme = useTheme();
+  const navigation = useNavigation();
+
+  function handleConfirmRental() {
+    navigation.dispatch(
+      CommonActions.navigate({
+        name: 'SchedulingComplete',
+      })
+    )
+  }
 
   function handleTeste() {
     console.log("Ok Click");
@@ -118,7 +128,7 @@ export function SchedulingDetails() {
 
       </Content>
       <Footer>
-        <Button title='ALugar agora' color={theme.colors.success} />
+        <Button title='Alugar agora' color={theme.colors.success} onPress={handleConfirmRental}/>
       </Footer>
     </Container>
   );
