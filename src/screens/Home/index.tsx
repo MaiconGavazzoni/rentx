@@ -25,10 +25,11 @@ export function Home() {
 
   
 
-  function handleCarDetails() {
+  function handleCarDetails(car: CarDTO) {
     navigation.dispatch(
       CommonActions.navigate({
         name: 'CarDetails',
+        params: {car}
       })
     )
   }
@@ -74,7 +75,7 @@ useEffect(() => {
         keyExtractor={item => item.id}
         renderItem={({ item }) =>
           <Car data={item}
-            onPress={handleCarDetails}
+            onPress={() =>handleCarDetails(item)}
           />
         }
 
