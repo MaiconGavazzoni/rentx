@@ -6,9 +6,10 @@ import { Feather } from '@expo/vector-icons';
 import { useTheme } from 'styled-components';
 import { RFValue } from 'react-native-responsive-fontsize';
 
-import {getAccessoryIcon} from '../../utils/getAccessoryIcon';
+import { getAccessoryIcon } from '../../utils/getAccessoryIcon';
 import { format } from 'date-fns';
 import { getPlatformDate } from '../../utils/getPlatformDate';
+
 
 import { ImageSlider } from '../../components/ImageSlider';
 
@@ -46,7 +47,7 @@ import { Alert } from 'react-native';
 
 interface Params {
   car: CarDTO;
-  dates: string [];
+  dates: string[];
 }
 
 interface RentalPeriod {
@@ -56,6 +57,7 @@ interface RentalPeriod {
 
 export function SchedulingDetails() {
 
+  const [loading, setLoading] = useState(false);
   const [rentalPeriod, setRentalPeriod] = useState<RentalPeriod>({} as RentalPeriod);
 
   const theme = useTheme();
@@ -71,6 +73,7 @@ export function SchedulingDetails() {
   }
 
   async function handleConfirmRental() {
+    setLoading(true);
 
     const schedules_bycars = await api.get(`/schedules_bycars/${car.id}`);
     const unavailable_dates = [
@@ -78,9 +81,12 @@ export function SchedulingDetails() {
       ...dates,
     ];
 
-    await api.post('schedules_byuser',{
+    await api.post('schedules_byuser', {
       user_id: 1,
-      car
+      car,
+      startDate: format(getPlatformDate(new Date(dates[0])), 'dd/MM/yyyy'),
+      endDate: format(getPlatformDate(new Date(dates[dates.length - 1])), 'dd/MM/yyyy')
+
     });
 
     api.put(`/schedules_bycars/${car.id}`, {
@@ -92,17 +98,20 @@ export function SchedulingDetails() {
           name: 'SchedulingComplete',
         })
       )
-    }).catch(() => Alert.alert("Não foi possível confirmar o agendamento"));
-
+    }).catch(() => {
+      setLoading(false);
+      Alert.alert("Não foi possível confirmar o agendamento")
     
+    });
+
   }
 
-useEffect(() => {
-  setRentalPeriod({
-    start: format(getPlatformDate(new Date(dates[0])), 'dd/MM/yyyy'),
-    end: format(getPlatformDate(new Date(dates[dates.length - 1])), 'dd/MM/yyyy'),
-  })
-},[]);  
+  useEffect(() => {
+    setRentalPeriod({
+      start: format(getPlatformDate(new Date(dates[0])), 'dd/MM/yyyy'),
+      end: format(getPlatformDate(new Date(dates[dates.length - 1])), 'dd/MM/yyyy'),
+    })
+  }, []);
 
   return (
     <Container>
@@ -128,17 +137,17 @@ useEffect(() => {
         </Details>
 
         <Accessories>
-          { 
-            car.accessories.map(accessory =>(
+          {
+            car.accessories.map(accessory => (
               <Accessory
-              key={accessory.type}
-              name={accessory.name} 
-              icon={getAccessoryIcon(accessory.type)}/>
+                key={accessory.type}
+                name={accessory.name}
+                icon={getAccessoryIcon(accessory.type)} />
             ))
-          
+
           }
         </Accessories>
-       
+
         <RentalPeriod>
           <CalendarIcon>
             <Feather
@@ -175,7 +184,13 @@ useEffect(() => {
 
       </Content>
       <Footer>
-        <Button title='Alugar agora' color={theme.colors.success} onPress={handleConfirmRental}/>
+        <Button
+          title='Alugar agora'
+          color={theme.colors.success}
+          onPress={handleConfirmRental} 
+          enable={!loading}
+          loading={loading}  
+        />
       </Footer>
     </Container>
   );
