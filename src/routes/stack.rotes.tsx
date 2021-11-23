@@ -5,6 +5,8 @@ import { Scheduling } from '../screens/Scheduling';
 import { SchedulingDetails } from '../screens/SchedulingDetails';
 import { SchedulingComplete } from '../screens/SchedulingComplete';
 import {MyCars} from '../screens/MyCars';
+import {Splash} from '../screens/Splash';
+import {SignIn} from '../screens/SignIn';
 
 import { createStackNavigator } from '@react-navigation/stack';
 import header from 'react-native-calendars/src/calendar/header';
@@ -15,8 +17,15 @@ export function StackRoutes() {
   return (
     <Navigator screenOptions={{
       headerShown: false,
+
     }}
+    initialRouteName='Splash'
     >
+       <Screen
+        name='Splash'
+        component={Splash}
+      />
+
       <Screen
         name='Home'
         component={Home}
