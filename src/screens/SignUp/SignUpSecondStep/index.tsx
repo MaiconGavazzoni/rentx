@@ -6,6 +6,7 @@ import { Bullet } from '../../../components/Bullet';
 import { PasswordInput } from '../../../components/PasswordInput';
 import { Button } from '../../../components/Button';
 import { useTheme} from 'styled-components';
+import { Confirmation } from '../../Confirmation';
 
 import {
   Container,
@@ -35,7 +36,7 @@ export function SignUpSecondStep() {
   const route = useRoute();
 
   const {user } = route.params as Params;
-  console.log(user);
+  
 
   function handleBack() {
     navigation.goBack();
@@ -51,7 +52,17 @@ export function SignUpSecondStep() {
     }
 
     //Enviar e cadastrar
-
+    navigation.dispatch(
+      CommonActions.navigate({
+        name: 'Confirmation',
+        params: { 
+          title: 'Conta criada.',
+          message: `Agora é só fazer login\ne aproveitar.`,
+          nextScreenRoute: 'SignIn'
+        }       
+      })
+    )
+    
   }
 
   return (

@@ -95,7 +95,12 @@ export function SchedulingDetails() {
     }).then(() => {
       navigation.dispatch(
         CommonActions.navigate({
-          name: 'SchedulingComplete',
+          name: 'Confirmation',
+          params: { 
+            title: 'Carro alugado!',
+            message: `Agora você só precisa ir\naté a concessionária da RENTX\npegar o seu automóvel.`,
+            nextScreenRoute: 'Home'
+        }       
         })
       )
     }).catch(() => {
