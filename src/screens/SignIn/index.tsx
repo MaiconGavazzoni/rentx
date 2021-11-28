@@ -4,6 +4,7 @@ import { StatusBar, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard, Al
 import { Button } from '../../components/Button';
 import { Input } from '../../components/Input';
 import { PasswordInput } from '../../components/PasswordInput';
+import { useAuth } from '../../hooks/auth';
 
 import * as Yup from 'yup';
 
@@ -26,6 +27,8 @@ export function SignIn() {
   const [password, setPassword] = useState('');
   const navigation = useNavigation();
 
+  const { user, signIn} = useAuth();
+
   async function handleSignIn(){
 
       try {
@@ -41,6 +44,7 @@ export function SignIn() {
         Alert.alert("Tudo certo.")
 
         //Fazer Login
+        signIn({email, password});
       } catch (error) {
         if(error instanceof Yup.ValidationError) {
           return Alert.alert('Opa', error.message);
