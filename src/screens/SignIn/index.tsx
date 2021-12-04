@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect} from 'react';
 import { StatusBar, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard, Alert } from 'react-native';
 
 import { Button } from '../../components/Button';
@@ -21,6 +21,8 @@ import theme from '../../styles/theme';
 import { useNavigation, CommonActions} from '@react-navigation/native';
 
 
+
+
 export function SignIn() {
 
   const [email, setEmail] = useState('');
@@ -41,7 +43,7 @@ export function SignIn() {
         });
     
         await schema.validate({ email, password });
-        Alert.alert("Tudo certo.")
+       
 
         //Fazer Login
         signIn({email, password});
@@ -65,6 +67,8 @@ export function SignIn() {
       })
     )
   }
+
+
 
   return (
     <KeyboardAvoidingView behavior='position' enabled>
