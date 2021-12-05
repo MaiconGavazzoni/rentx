@@ -6,6 +6,7 @@ import { Button } from '../../components/Button';
 import { getAccessoryIcon } from '../../utils/getAccessoryIcon';
 import { StatusBar, StyleSheet } from 'react-native';
 import { useNavigation, CommonActions, useRoute } from '@react-navigation/native';
+import { Car as ModelCar } from '../../database/model/Car';
 import { CarDTO } from '../../dtos/CarDTO';
 import { ImageSlider } from '../../components/ImageSlider';
 
@@ -31,7 +32,7 @@ import { getStatusBarHeight } from 'react-native-iphone-x-helper';
 import Animated, { useSharedValue, useAnimatedScrollHandler, useAnimatedStyle, interpolate, Extrapolate } from 'react-native-reanimated';
 import { useTheme } from 'styled-components';
 interface Params {
-  car: CarDTO;
+  car: ModelCar;
 }
 
 export function CarDetails() {
@@ -103,7 +104,7 @@ export function CarDetails() {
 
         <Animated.View style={sliderCarsStyleAnimation}>
           <CarImage>
-            <ImageSlider imagesUrl={car.photos} />
+            {/* <ImageSlider imagesUrl={car.thumbnail} /> */}
           </CarImage>
         </Animated.View>
       </Animated.View>
@@ -129,17 +130,17 @@ export function CarDetails() {
           </Rent>
         </Details>
 
-        <Accessories>
+        {/* <Accessories>
           {
-            car.accessories.map(accessory => (
+            car. .map(accessory => (
               <Accessory
-                key={accessory.type}
+                key={accessory.id}
                 name={accessory.name}
                 icon={getAccessoryIcon(accessory.type)} />
             ))
 
           }
-        </Accessories>
+        </Accessories> */}
         <About>
           {car.about}
         </About>

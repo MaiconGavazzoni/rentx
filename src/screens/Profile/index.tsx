@@ -31,14 +31,14 @@ import {
 import { useAuth } from '../../hooks/auth';
 
 export function Profile() {
-  const { user, signOut, updateUser} = useAuth();
+  const { user, signOut, updateUser } = useAuth();
 
   const [option, setOption] = useState<'dataEdit' | 'passwordEdit'>('dataEdit');
-  const [avatar , setAvatar] = useState(user.avatar);
-  const [ name ,  setName] = useState(user.name);
+  const [avatar, setAvatar] = useState(user.avatar);
+  const [name, setName] = useState(user.name);
   const [driverLicense, setDriverLicense] = useState(user.driver_license);
 
-  
+
   const theme = useTheme();
   const navigation = useNavigation();
 
@@ -47,14 +47,30 @@ export function Profile() {
   }
 
   function handleSignOut() {
-    signOut();
+    Alert.alert(
+      'Tem certeza?',
+      'Se você sair, irá precisar de internet para conectar-se novamente.',
+      [
+        {
+          text: 'Cancelar',
+          onPress: () => { },
+          style: 'cancel'
+        },
+        {
+          text: 'Sair',
+          onPress: () => signOut(),
+          style: 'default'
+        }
+      ]
+    );
+   
   }
 
   function handleOptionChange(optionSelected: 'dataEdit' | 'passwordEdit') {
     setOption(optionSelected);
   }
 
-  async function handleAvatarSelect(){
+  async function handleAvatarSelect() {
     console.log("Buscou");
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -70,15 +86,15 @@ export function Profile() {
     }
   }
 
-  async function handleProfileUpdate(){
+  async function handleProfileUpdate() {
     try {
       const schema = Yup.object().shape({
         driverLicense: Yup.string()
-        .required('CNH é obrigatória'),
+          .required('CNH é obrigatória'),
         name: Yup.string().required('Nome é obrigatório.')
       });
 
-      const data = {name, driverLicense};
+      const data = { name, driverLicense };
       await schema.validate(data);
       await updateUser({
         id: user.id,
@@ -93,9 +109,9 @@ export function Profile() {
 
     } catch (error) {
       console.log(error);
-      if(error instanceof Yup.ValidationError){
+      if (error instanceof Yup.ValidationError) {
         Alert.alert('Opa', error.message);
-      }else{
+      } else {
         Alert.alert('Não foi possível atualizar o perfil.')
       }
 
@@ -125,7 +141,7 @@ export function Profile() {
               </LogoutButton>
             </HeaderTop>
             <PhotoContainer>
-              {!!avatar && <Photo source={{ uri: avatar }} /> }
+              {!!avatar && <Photo source={{ uri: avatar }} />}
               <PhotoButton onPress={handleAvatarSelect}>
                 <Feather name='camera' size={24} color={theme.colors.shape} />
               </PhotoButton>
@@ -146,7 +162,7 @@ export function Profile() {
               </Option>
             </Options>
 
-            {option === 'dataEdit'?
+            {option === 'dataEdit' ?
               <Section >
                 <Input
                   iconName='user'
@@ -186,7 +202,7 @@ export function Profile() {
               </Section>
             }
 
-            <Button 
+            <Button
               title='Salvar alterações'
               onPress={handleProfileUpdate}
             />
