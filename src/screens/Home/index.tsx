@@ -31,7 +31,7 @@ export function Home() {
   const netInfo = useNetInfo();
   const navigation = useNavigation();
 
-  function handleCarDetails(car: CarDTO) {
+  function handleCarDetails(car: ModelCar) {
     navigation.dispatch(
       CommonActions.navigate({
         name: 'CarDetails',

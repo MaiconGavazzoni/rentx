@@ -43,6 +43,7 @@ import { useNavigation, CommonActions, useRoute } from '@react-navigation/native
 import { CarDTO } from '../../dtos/CarDTO';
 import { api } from '../../services/api';
 import { Alert } from 'react-native';
+import { useNetInfo } from '@react-native-community/netinfo';
 
 
 interface Params {
@@ -57,8 +58,10 @@ interface RentalPeriod {
 
 export function SchedulingDetails() {
 
+  const [carUpdated, setCarUpdated] = useState<CarDTO>({} as CarDTO);
   const [loading, setLoading] = useState(false);
   const [rentalPeriod, setRentalPeriod] = useState<RentalPeriod>({} as RentalPeriod);
+  const netInfo = useNetInfo();
 
   const theme = useTheme();
   const navigation = useNavigation();
@@ -75,38 +78,43 @@ export function SchedulingDetails() {
   async function handleConfirmRental() {
     setLoading(true);
 
-    const schedules_bycars = await api.get(`/schedules_bycars/${car.id}`);
-    const unavailable_dates = [
-      ...schedules_bycars.data.unavailable_dates,
-      ...dates,
-    ];
+    // const schedules_bycars = await api.get(`/schedules_bycars/${car.id}`);
+    // const unavailable_dates = [
+    //   ...schedules_bycars.data.unavailable_dates,
+    //   ...dates,
+    // ];
 
-    await api.post('schedules_byuser', {
-      user_id: 1,
-      car,
-      startDate: format(getPlatformDate(new Date(dates[0])), 'dd/MM/yyyy'),
-      endDate: format(getPlatformDate(new Date(dates[dates.length - 1])), 'dd/MM/yyyy')
+    //Datas com formatDate
+    // await api.post('/rentals', {
+    //   user_id: 1,
+    //   car_id: car.id,
+    //   start_date: format(getPlatformDate(new Date(dates[0])), 'dd/MM/yyyy'),
+    //   end_date: format(getPlatformDate(new Date(dates[dates.length - 1])), 'dd/MM/yyyy')
 
-    });
+    // });
+    console.log("Agendar", car.id, String(new Date(dates[0])), String(new Date(dates[dates.length - 1])), rentTotal);
+    await api.post('rentals', {      
+      user_id: "1",
+      car_id: car.id,
+      start_date: new Date(dates[0]),
+      end_date: new Date(dates[dates.length - 1]),
+      total: rentTotal
 
-    api.put(`/schedules_bycars/${car.id}`, {
-      id: car.id,
-      unavailable_dates
     }).then(() => {
       navigation.dispatch(
         CommonActions.navigate({
           name: 'Confirmation',
-          params: { 
+          params: {
             title: 'Carro alugado!',
             message: `Agora você só precisa ir\naté a concessionária da RENTX\npegar o seu automóvel.`,
             nextScreenRoute: 'Home'
-        }       
+          }
         })
       )
     }).catch(() => {
       setLoading(false);
       Alert.alert("Não foi possível confirmar o agendamento")
-    
+
     });
 
   }
@@ -118,6 +126,16 @@ export function SchedulingDetails() {
     })
   }, []);
 
+  useEffect(() => {
+    async function fetchCarUpdated() {
+      const response = await api.get(`/cars/${car.id}`);
+      setCarUpdated(response.data);
+    }
+    if (netInfo.isConnected === true) {
+      fetchCarUpdated();
+    }
+  }, [netInfo.isConnected])
+
   return (
     <Container>
       <Header>
@@ -125,7 +143,10 @@ export function SchedulingDetails() {
       </Header>
 
       <CarImage>
-        <ImageSlider imagesUrl={car.photos} />
+        <ImageSlider imagesUrl={
+          !!carUpdated.photos ?
+            carUpdated.photos : [{ id: car.thumbnail, photo: car.thumbnail }]
+        } />
       </CarImage>
 
       <Content>
@@ -141,17 +162,19 @@ export function SchedulingDetails() {
           </Rent>
         </Details>
 
-        <Accessories>
-          {
-            car.accessories.map(accessory => (
-              <Accessory
-                key={accessory.type}
-                name={accessory.name}
-                icon={getAccessoryIcon(accessory.type)} />
-            ))
+        {carUpdated.accessories &&
+          <Accessories>
+            {
+              carUpdated.accessories.map(accessory => (
+                <Accessory
+                  key={accessory.type}
+                  name={accessory.name}
+                  icon={getAccessoryIcon(accessory.type)} />
+              ))
 
-          }
-        </Accessories>
+            }
+          </Accessories>
+        }
 
         <RentalPeriod>
           <CalendarIcon>
@@ -192,9 +215,9 @@ export function SchedulingDetails() {
         <Button
           title='Alugar agora'
           color={theme.colors.success}
-          onPress={handleConfirmRental} 
+          onPress={handleConfirmRental}
           enabled={!loading}
-          loading={loading}  
+          loading={loading}
         />
       </Footer>
     </Container>
